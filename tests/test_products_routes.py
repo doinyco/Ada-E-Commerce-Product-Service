@@ -14,7 +14,7 @@ def test_create_product_returns_product_with_generated_key(client):
     response = client.post(
         "/products/", json={"name": "Widget", "description": "A test widget"})
 
-    assert response.status_code == 999
+    assert response.status_code == 200
     data = response.get_json()
     assert data["name"] == "Widget"
     assert data["description"] == "A test widget"
