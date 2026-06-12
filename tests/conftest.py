@@ -42,7 +42,10 @@ def dynamodb_table(mock_aws_context):
     table.wait_until_exists()
 
     s3 = boto3.client("s3", region_name=os.environ["AWS_DEFAULT_REGION"])
-    s3.create_bucket(Bucket=os.environ["BUCKET_NAME"])
+    s3.create_bucket(
+        Bucket=os.environ["BUCKET_NAME"],
+        CreateBucketConfiguration={"LocationConstraint": os.environ["AWS_DEFAULT_REGION"]}
+    )
 
     yield table
 
