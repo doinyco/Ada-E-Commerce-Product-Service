@@ -4,6 +4,11 @@ env:
   variables:
     AWS_DEFAULT_REGION: us-west-2
     IMAGE_REPO_NAME: ecommerce/products
+    TABLE_NAME: test-table 
+    KEY_NAME: product_key 
+    BUCKET_NAME: test-bucket 
+    S3_DEFAULT_KEY: S3_DEFAULT_KEY
+
 
 phases:
   pre_build:
@@ -12,9 +17,13 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      
 
   build:
     commands:
+      - echo Running tests... 
+      - pip install -r requirements.txt 
+      - pytest
       - echo Building the Docker image...
       - docker build --platform linux/amd64 --provenance=false -t $REPOSITORY_URI:$IMAGE_TAG .
       - docker tag $REPOSITORY_URI:$IMAGE_TAG $REPOSITORY_URI:latest
